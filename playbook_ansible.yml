@@ -1,0 +1,52 @@
+---
+- hosts: all
+  become: yes
+
+  tasks:
+    - name: Atualizar pacotes
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Instalar dependências
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+        state: present
+
+    - name: Adicionar chave GPG do Docker
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/debian/gpg
+        state: present
+
+    - name: Adicionar repositório do Docker
+      ansible.builtin.apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/debian bookworm stable
+        state: present
+
+    - name: Instalar Docker e Docker Compose v2
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+        state: present
+        update_cache: yes
+
+    - name: Copiar arquivo docker-compose.yml
+      copy:
+        src: docker-compose.yml
+        dest: /home/vagrant/docker-compose.yml
+        owner: vagrant
+        group: vagrant
+        mode: '0644'
+
+    - name: Subir aplicação com docker-compose
+      command: docker compose -f /home/vagrant/docker-compose.yml up -d
+      args:
+        chdir: /home/vagrant
+
