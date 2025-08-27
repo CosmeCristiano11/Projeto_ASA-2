@@ -6,7 +6,7 @@ Vagrant.configure("2") do |config|
   config.vm.hostname = "caua.cosme"
   config.ssh.insert_key = false
 
-  config.vm.network "private_network", ip: "192.168.56.136"
+  config.vm.network "private_network", ip: "192.168.56.130"
 
   config.vm.synced_folder ".", "/vagrant"
 

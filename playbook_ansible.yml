@@ -37,16 +37,8 @@
         state: present
         update_cache: yes
 
-    - name: Copiar arquivo docker-compose.yml
-      copy:
-        src: docker-compose.yml
-        dest: /home/vagrant/docker-compose.yml
-        owner: vagrant
-        group: vagrant
-        mode: '0644'
-
     - name: Subir aplicação com docker-compose
-      command: docker compose -f /home/vagrant/docker-compose.yml up -d
+      command: docker compose -f /vagrant/docker-compose.yml up -d
       args:
-        chdir: /home/vagrant
+        chdir: /vagrant
 

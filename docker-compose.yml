@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+  webproxy:
+    image: cosme11cristiano/nginx-custom:1.0
+    container_name: webproxy
+    ports:
+      - "8080:8080"
+    depends_on:
+      - webserver
+    networks:
+      - wordpress
+
+  webserver:
+    image: wordpress:latest
+    container_name: webserver
+    environment:
+      WORDPRESS_DB_HOST: database:3306
+      WORDPRESS_DB_USER: wpuser
+      WORDPRESS_DB_PASSWORD: wppassword
+      WORDPRESS_DB_NAME: wpdb
+    volumes:
+      - app:/var/www/html
+    networks:
+      - wordpress
+
+  database:
+    image: mysql:5.7
+    container_name: database
+    environment:
+      MYSQL_DATABASE: wpdb
+      MYSQL_USER: wpuser
+      MYSQL_PASSWORD: wppassword
+      MYSQL_ROOT_PASSWORD: rootpassword
+    volumes:
+      - my:/var/lib/mysql
+    networks:
+      - wordpress
+
+volumes:
+  app:
+  my:
+
+networks:
+  wordpress:
+
