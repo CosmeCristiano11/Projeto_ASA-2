@@ -1,0 +1,35 @@
+Testar o ip:
+ip a | grep 192.168.56
+
+Testar o Docker:
+docker --version
+docker compose version
+systemctl status docker
+
+Verificar os containers:
+docker ps
+
+Verificar comunicação entre os containers:
+docker exec -it webproxy ping -c 2 webserver
+docker exec -it webproxy curl http://webserver
+
+Testar proxy(dentro da VM):
+curl http://localhost:8080
+
+Abrir no navegador:
+http://192.168.56.130:8080
+
+
+Acessar o mysql:
+docker exec -it database mysql -u wpuser -pifpb
+
+Descobrir o banco:
+SHOW DATABASES;
+
+Selecionar o banco:
+USE wpdb
+
+Fazer consultas:
+SELECT * FROM wp_users;
+SELECT * FROM wp_posts;
+SELECT * FROM wp_options;

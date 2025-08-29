@@ -1,11 +1,11 @@
-version: "3.9"
+version: "3.3"
 
 services:
   webproxy:
     image: cosme11cristiano/nginx-custom:1.0
     container_name: webproxy
     ports:
-      - "8080:8080"
+      - "8080:8080"  
     depends_on:
       - webserver
     networks:
@@ -17,12 +17,13 @@ services:
     environment:
       WORDPRESS_DB_HOST: database:3306
       WORDPRESS_DB_USER: wpuser
-      WORDPRESS_DB_PASSWORD: wppassword
+      WORDPRESS_DB_PASSWORD: ifpb
       WORDPRESS_DB_NAME: wpdb
     volumes:
       - app:/var/www/html
     networks:
       - wordpress
+    # SEM exposição de portas - acesso apenas interno via Nginx
 
   database:
     image: mysql:5.7
@@ -30,8 +31,8 @@ services:
     environment:
       MYSQL_DATABASE: wpdb
       MYSQL_USER: wpuser
-      MYSQL_PASSWORD: wppassword
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_PASSWORD: ifpb
+      MYSQL_ROOT_PASSWORD: ifpb
     volumes:
       - my:/var/lib/mysql
     networks:
@@ -43,4 +44,3 @@ volumes:
 
 networks:
   wordpress:
-

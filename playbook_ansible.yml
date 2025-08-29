@@ -1,12 +1,17 @@
 ---
 - hosts: all
   become: yes
-
   tasks:
-    - name: Atualizar pacotes
+    - name: Atualizar lista de pacotes
       apt:
         update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Fazer upgrade do sistema
+      apt:
         upgrade: dist
+        autoremove: yes
+        autoclean: yes
 
     - name: Instalar dependências
       apt:
@@ -14,20 +19,21 @@
           - apt-transport-https
           - ca-certificates
           - curl
-          - software-properties-common
+          - gnupg
+          - lsb-release
         state: present
 
     - name: Adicionar chave GPG do Docker
-      ansible.builtin.apt_key:
+      apt_key:
         url: https://download.docker.com/linux/debian/gpg
         state: present
 
     - name: Adicionar repositório do Docker
-      ansible.builtin.apt_repository:
-        repo: deb [arch=amd64] https://download.docker.com/linux/debian bookworm stable
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/debian bookworm stable"
         state: present
 
-    - name: Instalar Docker e Docker Compose v2
+    - name: Instalar Docker e Docker Compose
       apt:
         name:
           - docker-ce
@@ -37,8 +43,24 @@
         state: present
         update_cache: yes
 
-    - name: Subir aplicação com docker-compose
-      command: docker compose -f /vagrant/docker-compose.yml up -d
-      args:
-        chdir: /vagrant
+    - name: Adicionar usuário vagrant ao grupo docker
+      user:
+        name: vagrant
+        groups: docker
+        append: yes
 
+    - name: Iniciar e habilitar serviço Docker
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Copiar docker-compose.yml
+      copy:
+        src: docker-compose.yml
+        dest: /home/vagrant/docker-compose.yml
+
+    - name: Subir containers Docker
+      command: docker compose -f /home/vagrant/docker-compose.yml up -d
+      async: 0
+      poll: 0
